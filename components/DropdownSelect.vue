@@ -2,10 +2,9 @@
   <Listbox as="div" v-model="selected" @click="$emit('setOption', selected.id)">
     <ListboxLabel class="block text-sm font-medium text-gray-700">{{ props.description }}</ListboxLabel>
     <div class="relative mt-1">
-      <ListboxButton class="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
+      <ListboxButton class="nes-container relative w-full cursor-default bg-white text-left shadow-sm sm:text-sm">
         <span class="block truncate">{{ selected.name }}</span>
         <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-          <ChevronUpDownIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
         </span>
       </ListboxButton>
 
@@ -34,3 +33,13 @@ const props = defineProps(['options', 'description'])
 
 const selected = ref(props.options[1])
 </script>
+
+<style lang="scss">
+.nes-border {
+  border-image-slice: 2;
+  border-image-width: 2;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+</style>

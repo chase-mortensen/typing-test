@@ -6,9 +6,10 @@
     <TypeTestBox v-if="state.timeLeft > 0 || state.countdown > 0" :active="state.timeLeft > 0" />
   </ClientOnly>
 
+  <!-- class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" -->
   <button
     type="button"
-    class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+    class="nes-btn is-primary"
     @click="startCountdown()"
     >Start Test</button>
 </template>

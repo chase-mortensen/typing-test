@@ -17,6 +17,7 @@
 
   <!-- input for debugging/testing purposes -->
   <!-- (should be hidden in final iteration?) -->
+  <!-- class="p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" -->
   <div class="mb-5">
     <input
       v-model="state.input"
@@ -24,7 +25,7 @@
       type="text"
       name="input"
       id="input"
-      class="p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+      class="nes-input"
       placeholder="type here..."
       @keydown.space="nextWord"
       @keydown.enter="nextWord"
