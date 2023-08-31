@@ -1,8 +1,8 @@
 <template>
-  <div class="overflow-hidden rounded-lg bg-white mb-5 px-4 py-5 shadow sm:p-6">
+  <div class="nes-container overflow-hidden bg-white mb-5 px-4 py-5 shadow sm:p-6">
     <!-- <dt class="truncate text-sm font-medium text-gray-500">{{ item?.name }}</dt> -->
     <dd
-      class="mt-1 min-w-full text-xl font-semibold tracking-tight text-gray-700 text-center">
+      class="mt-1 min-w-full text-sm font-semibold tracking-tight text-gray-700 text-center">
       <span v-for="(wordObj, index) in currentRow">
         <span v-if="index === state.rowIndex" class="p-1 mr-1 bg-gray-200 rounded">{{ wordObj.word }}</span>
         <span v-else-if="wordObj.status === wordStatus.CORRECT" class="p-1 mr-1 rounded text-emerald-800 bg-emerald-200">{{ wordObj.word }}</span>
@@ -10,23 +10,19 @@
         <span v-else class="p-1 mr-1 rounded">{{ wordObj.word }}</span>
       </span>
     </dd>
-    <dd class="mt-1 text-xl font-semibold tracking-tight text-gray-400 text-center">
+    <dd class="mt-1 text-xs font-semibold tracking-tight text-gray-400 text-center">
       <span v-for="wordObj in nextRow" class="p-1 rounded">{{ wordObj.word }}</span>
     </dd>
     </div>
 
-  <!-- input for debugging/testing purposes -->
-  <!-- (should be hidden in final iteration?) -->
-  <!-- class="p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" -->
   <div class="mb-5">
     <input
       v-model="state.input"
-      :disabled="!props.active"
       type="text"
       name="input"
       id="input"
       class="nes-input"
-      placeholder="type here..."
+      placeholder="Press space to start"
       @keydown.space="nextWord"
       @keydown.enter="nextWord"
       @keydown="isValidChar"
@@ -87,7 +83,7 @@
   let wordObjList = wordList.map(w => {
     return {word: w, status: wordStatus.NA}
   })
-  const maxChars = 70
+  const maxChars = 50
 
   let currentRow = getWordSubList()
   let nextRow = getWordSubList()

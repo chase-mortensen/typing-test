@@ -1,13 +1,20 @@
 <template>
   <StatsRow />
 
-  <DropdownSelect
+  <!-- <label for="default_select">Default select</label> -->
+  <!-- <div class="nes-select">
+    <select required id="default_select">
+      <option value="" disabled selected hidden>Select...</option>
+      <option v-for="duration in durations" :value="duration.id">{{ duration.name }}</option>
+    </select>
+  </div> -->
+  <!-- <DropdownSelect
     class="pb-4"
     description="Test Duration"
     :options="durations"
     @setOption="(d) => testLength = d"
     v-show="timeLeft <= 0"
-  />
+  /> -->
   <TypeTest />
 </template>
 

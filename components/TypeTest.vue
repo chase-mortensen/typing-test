@@ -1,17 +1,17 @@
 <template>
-  <StatBox :item="{name: countLabel, stat: timerDisplay}" />
+  <!-- <StatBo x :item="{name: countLabel, stat: timerDisplay}" /> -->
 
   <!-- Display -->
   <ClientOnly>
-    <TypeTestBox v-if="state.timeLeft > 0 || state.countdown > 0" :active="state.timeLeft > 0" />
+    <TypeTestBox :active="state.timeLeft > 0" />
   </ClientOnly>
 
   <!-- class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" -->
-  <button
+  <!-- <button
     type="button"
     class="nes-btn is-primary"
     @click="startCountdown()"
-    >Start Test</button>
+    >Start Test</button> -->
 </template>
 
 <script setup>
@@ -23,14 +23,14 @@ const state = reactive({
   countdown: 0
 })
 
-const durations = [
-  {id: 30, name: '30 seconds'},
-  {id: 5, name: '5 seconds'},
-  {id: 60, name: '60 seconds'},
-  {id: 90, name: '90 seconds'},
-  {id: 120, name: '2 minutes'},
-  {id: 180, name: '3 minutes'},
-]
+// const durations = [
+//   {id: 30, name: '30 seconds'},
+//   {id: 5, name: '5 seconds'},
+//   {id: 60, name: '60 seconds'},
+//   {id: 90, name: '90 seconds'},
+//   {id: 120, name: '2 minutes'},
+//   {id: 180, name: '3 minutes'},
+// ]
 
 const startCountdown = () => {
   state.countdown = 3
