@@ -4,7 +4,7 @@
     <dd
       class="mt-1 min-w-full text-sm font-semibold tracking-tight text-gray-700 text-center">
       <span v-for="(wordObj, index) in currentRow">
-        <span v-if="index === state.rowIndex" class="p-1 mr-1 bg-gray-200 rounded">{{ wordObj.word }}</span>
+        <span v-if="index === rowIndex" class="p-1 mr-1 bg-gray-200 rounded">{{ wordObj.word }}</span>
         <span v-else-if="wordObj.status === wordStatus.CORRECT" class="p-1 mr-1 rounded text-emerald-800 bg-emerald-200">{{ wordObj.word }}</span>
         <span v-else-if="wordObj.status === wordStatus.INCORRECT" class="p-1 mr-1 rounded text-red-800 bg-red-200">{{ wordObj.word }}</span>
         <span v-else class="p-1 mr-1 rounded">{{ wordObj.word }}</span>
@@ -17,7 +17,7 @@
 
   <div class="mb-5">
     <input
-      v-model="state.input"
+      v-model="input"
       type="text"
       name="input"
       id="input"
@@ -30,121 +30,131 @@
   </div>
 </template>
 
-<script setup>
-  const props = defineProps(['active'])
-  const state = reactive({
-    input: "",
-    currentWordIndex: 0,
-    currentTypingIndex: 0,
-    rowIndex: 0,
-  })
+<script>
+const wordStatus = {
+  INCORRECT: 0,
+  CORRECT: 1,
+  NA: 2
+}
 
-  const wordStatus = {
-    INCORRECT: 0,
-    CORRECT: 1,
-    NA: 2
-  }
-
-  watch(() => props.active, async (isActive, prevState) => {
-    if (isActive) {
-      console.log('starting test')
-      startTest()
+export default {
+  name: 'TypeTestBox',
+  props: {
+    active: {
+      type: Boolean
     }
-  })
+  },
+  data() {
+    return {
+      currentRow: null,
+      nextRow: null,
 
-  const startTest = () => {
-    wordList = getRandomWords(900)
-    wordObjList = wordList.map(w => {
-      return {word: w, status: wordStatus.NA}
-    })
-    currentRow = getWordSubList()
-    nextRow = getWordSubList()
-  }
-
-  const getWordSubList = () => {
-    let wordObjSubList = []
-    let strLength = 0
-    let wordObj
-    do {
-      wordObj = wordObjList[state.currentWordIndex]
-      console.log('wordObj: ', wordObj)
-      if (wordObj === undefined) break
-      if ((strLength + wordObj.word.length + 1) <= maxChars) {
-        strLength += wordObj.word.length + 1
-        wordObjSubList.push(wordObj)
-        state.currentWordIndex++
+      currentWordIndex: 0,
+      currentTypingIndex: 0,
+      rowIndex: 0,
+      input: '',
+      maxChars: 50,
+      wordList: null,
+    }
+  },
+  computed: {
+    currentRowStr() {
+      if (this.currentRow.length) {
+        return this.currentRow.join(' ')
       }
-    } while ((strLength + wordObj.word.length + 1) <= maxChars)
-    return wordObjSubList
-  }
+      return ''
+    },
+    nextRowStr() {
+      if (this.nextRow.length) {
+        return this.nextRow.join(' ')
+      }
+      return ''
+    },
+    wordObjList() {
+      return this.wordList?.map(w => {
+        return {word: w, status: wordStatus.NA}
+      }) ?? []
+    }
+  },
+  methods: {
+    finishRow() { // this needs to move the next row to the current row
+      this.currentRow = this.nextRow
+      this.nextRow = this.getWordSubList()
+      this.rowIndex = 0
+      this.input = ""
+    },
+    getWordSubList() {
+      let wordObjSubList = []
+      let strLength = 0
+      let wordObj
+      do {
+        wordObj = this.wordObjList[this.currentWordIndex]
+        console.log('wordObj: ', wordObj)
+        if (wordObj === undefined) break
+        if ((strLength + wordObj.word.length + 1) <= this.maxChars) {
+          strLength += wordObj.word.length + 1
+          wordObjSubList.push(wordObj)
+          this.currentWordIndex++
+        }
+      } while ((strLength + wordObj.word.length + 1) <= this.maxChars)
+      return wordObjSubList
+    },
+    isValidChar(e) { // only allow alpha or alphanumeric input -
+      // also limit to 20/25 chars
+      e = (e) ? e : window.Event;
+      const charCode = (e.which) ? e.which : e.keyCode
+      if ((charCode === 46 ||
+        (charCode >= 48 || charCode <= 61) ||
+        (charCode >= 65 || charCode <= 90)) && (this.input.length <= 20)) {
+        return true
+      } else if (this.input.length > 20){ // always allow space
+        if (charCode === 8 || charCode === 13) {
+          e.preventDefault()
+        }
+      }
+      e.preventDefault()
+    },
+    nextWord (e) { // on space key pressed, increment currentTypingIndex
+      // and validate input and clear input
+      console.log('space/enter pressed')
+      const word = this.wordObjList[this.currentTypingIndex].word
 
+      if (this.input.trim() === word) {
+        this.wordObjList[this.currentTypingIndex].status = wordStatus.CORRECT
+      } else {
+        this.wordObjList[this.currentTypingIndex].status = wordStatus.INCORRECT
+      }
+      this.currentTypingIndex++
+      this.rowIndex++
 
-  const wordList = getRandomWords(900)
-  let wordObjList = wordList.map(w => {
-    return {word: w, status: wordStatus.NA}
-  })
-  const maxChars = 50
-
-  let currentRow = getWordSubList()
-  let nextRow = getWordSubList()
-
-
-
-  const finishRow = () => { // this needs to move the next row to the current row
-    currentRow = nextRow
-    nextRow = getWordSubList()
-    state.rowIndex = 0
-    state.input = ""
-  }
-
-  const isValidChar = (e) => { // only allow alpha or alphanumeric input -
-    // also limit to 20/25 chars
-    e = (e) ? e : window.event;
-    const charCode = (e.which) ? e.which : e.keyCode
-    if ((charCode === 46 ||
-      (charCode >= 48 || charCode <= 61) ||
-      (charCode >= 65 || charCode <= 90)) && (state.input.length <= 20)) {
-      return true
-    } else if (state.input.length > 20){ // always allow space
-      if (charCode === 8 || charCode === 13) {
-        e.preventDefault()
+      this.input = ""
+      if (this.rowIndex >= this.currentRow.length) {
+        this.finishRow()
+      }
+    },
+    startTest() {
+      this.wordList = getRandomWords(900)
+      this.wordObjList = this.wordList?.map(w => {
+        return {word: w, status: wordStatus.NA}
+      }) ?? []
+      this.currentRow = this.getWordSubList()
+      this.nextRow = this.getWordSubList()
+    }
+  },
+  watch: {
+    active(newValue) {
+      if (newValue) {
+        console.log('starting test')
+        this.startTest()
       }
     }
-    e.preventDefault()
+  },
+  mounted() {
+    this.currentRow = this.getWordSubList()
+    this.nextRow = this.getWordSubList()
+    this.wordList = getRandomWords(900)
   }
-
-  const nextWord = (e) => { // on space key pressed, increment currentTypingIndex
-    // and validate input and clear input
-    console.log('space/enter pressed')
-    const word = wordObjList[state.currentTypingIndex].word
-
-    if (state.input.trim() === word) {
-      wordObjList[state.currentTypingIndex].status = wordStatus.CORRECT
-    } else {
-      wordObjList[state.currentTypingIndex].status = wordStatus.INCORRECT
-    }
-    state.currentTypingIndex++
-    state.rowIndex++
-
-    state.input = ""
-    if (state.rowIndex >= currentRow.length) {
-      finishRow()
-    }
-  }
-
-  const currentRowStr = computed(() => {
-    if (currentRow.length) {
-      return currentRow.join(' ')
-    }
-    return ''
-  })
-
-  const nextRowStr = computed(() => {
-    if (nextRow.length) {
-      return nextRow.join(' ')
-    }
-    return ''
-  })
+}
 </script>
 
 <style>
